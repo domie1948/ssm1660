@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.DaiqundingdanDao">
+
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.name as name
+        ,a.yh_types as yhTypes
+        ,a.consigneeSite as consigneeSite
+        ,a.consignee as consignee
+        ,a.takeACode as takeACode
+        ,a.consigneeNumber as consigneeNumber
+        ,a.kdzt_types as kdztTypes
+        ,a.dqr_types as dqrTypes
+    </sql>
+
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.DaiqundingdanView" >
+        SELECT
+        <include refid="Base_Column_List" />,b.name as dqrname
+        FROM Daiqundingdan  a left join renyuan b on a.dqr_types = b.id
+        <where>
+            <if test=" params.name != '' and params.name != null and params.name != 'null' ">
+                and a.name like CONCAT('%',#{params.name},'%')
+            </if>
+            <if test=" params.yhTypes != '' and params.yhTypes != null and params.yhTypes != 'null' ">
+                and a.yh_types = #{params.yhTypes}
+            </if>
+            <if test=" params.consigneeSite != '' and params.consigneeSite != null and params.consigneeSite != 'null' ">
+                and a.consigneeSite like CONCAT('%',#{params.consigneeSite},'%')
+            </if>
+            <if test=" params.consignee != '' and params.consignee != null and params.consignee != 'null' ">
+                and a.consignee like CONCAT('%',#{params.consignee},'%')
+            </if>
+            <if test=" params.consigneeNumber != '' and params.consigneeNumber != null and params.consigneeNumber != 'null' ">
+                and a.consigneeNumber like CONCAT('%',#{params.consigneeNumber},'%')
+            </if>
+            <if test=" params.kdztTypes != '' and params.kdztTypes != null and params.kdztTypes != 'null' ">
+                and a.kdzt_types = #{params.kdztTypes}
+            </if>
+            <if test=" params.dqrTypes != '' and params.dqrTypes != null and params.dqrTypes != 'null' ">
+                and a.dqr_types = #{params.dqrTypes}
+            </if>
+            <if test=" params.role == '代取员'">
+                and (a.dqr_types = #{params.yh} or a.kdzt_types = 2)
+            </if>
+            <if test=" params.role == '用户'">
+                and a.yh_types = #{params.yh}
+            </if>
+        </where>
+        order by a.id desc
+    </select>
+
+</mapper>
